@@ -1,0 +1,8 @@
+com\in28minutes\springboot\microservice\example\currencyconversion\CurrencyExchangeServiceProxy.class
+com\in28minutes\springboot\microservice\example\currencyconversion\interceptor\CurrencyConversionInterceptorAppConfig.class
+com\in28minutes\springboot\microservice\example\currencyconversion\interceptor\CurrencyConversionInterceptor.class
+com\in28minutes\springboot\microservice\example\currencyconversion\aop\LogExecutionTime.class
+com\in28minutes\springboot\microservice\example\currencyconversion\SpringBootMicroserviceCurrencyConversionApplication.class
+com\in28minutes\springboot\microservice\example\currencyconversion\CurrencyConversionBean.class
+com\in28minutes\springboot\microservice\example\currencyconversion\CurrencyConversionController.class
+com\in28minutes\springboot\microservice\example\currencyconversion\aop\RequestLogger.class

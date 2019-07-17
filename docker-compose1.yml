@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  dns:
+    build: 
+      context: ./spring-boot-microservice-eureka-naming-server
+      args:
+        buildno: 1.0
+    image: 127.0.0.1:5000/eureka-naming-server
+    container_name: dns
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+     - "8762:8761"

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: currency-conversion
+Implementation-Version: 1.0
+Built-By: HQZ
+Implementation-Vendor-Id: com.in28minutes.springboot.microservice.exam
+ ple.currency-conversion
+Build-Jdk: 1.8.0_101
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/spring-boot-microservice-currency-conversion
+Created-By: Maven Integration for Eclipse
+

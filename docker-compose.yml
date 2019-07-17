@@ -1,0 +1,111 @@
+version: "3.3"
+services:
+  dns:
+    build: 
+      context: ./spring-boot-microservice-eureka-naming-server
+      args:
+        buildno: 1.0
+    image: 127.0.0.1:5000/eureka-naming-server
+    container_name: dns
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      placement:
+        constraints:
+          - node.role == manager
+    ports:
+     - "8761:8761"
+  proxy:
+    build: ./ZuulProxyExample
+    image: 127.0.0.1:5000/zuul-proxy
+    container_name: gw
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    depends_on:
+      - dns
+      - config
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://dns:8761/eureka
+    ports:
+     - "8111:8111"
+    volumes:
+     - "/c/Users/HQZ/Documents/workspace-sts-3.9.4.RELEASE/CCSModule/ZuulProxyExample/logs:/export/netsite/ext-admin/logs"
+  ccs:
+    build: ./currency-conversion
+    image: 127.0.0.1:5000/currency-conversion-service
+    deploy:
+      mode: replicated
+      replicas: 2 
+      placement:
+        constraints:
+          - node.role == worker
+    depends_on:
+      - dns
+      - config
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://dns:8761/eureka
+    ports:
+     - "8100:8100"
+    volumes:
+     - "/c/Users/HQZ/Documents/workspace-sts-3.9.4.RELEASE/CCSModule/spring-boot-microservice-currency-conversion-service/logs:/export/netsite/ext-admin/logs"
+  
+  forex:
+    build: ./spring-boot-microservice-forex-service
+    image: 127.0.0.1:5000/forex-service
+    deploy:
+      mode: replicated
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == worker
+    depends_on:
+      - dns
+      - config
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://dns:8761/eureka
+    ports:
+     - "8000:8000"
+    volumes:
+     - "/c/Users/HQZ/Documents/workspace-sts-3.9.4.RELEASE/CCSModule/spring-boot-microservice-forex-service/logs:/export/netsite/ext-admin/logs/"
+  zipkin:
+     build: ./zipkin-server
+     image: 127.0.0.1:5000/zipkin-server
+     container_name: zipkin
+     depends_on:
+      - dns
+      - config
+     environment:
+      - eureka.client.service-url.defaultZone=http://dns:8761/eureka
+     ports:
+       - "9411:9411"
+  config:
+    build: ./spring-cloud-config-server
+    image: 127.0.0.1:5000/config-service
+    container_name: config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      placement:
+        constraints:
+          - node.role == manager
+    depends_on:
+      - dns
+    environment:
+      - eureka.client.service-url.defaultZone=http://dns:8761/eureka
+    ports:
+     - "8222:8222"
+    volumes:
+      - type: bind
+        source: /c/Users/HQZ/Documents/workspace-sts-3.9.4.RELEASE/CCSModule/config-repo
+        target: /export/netsite/ext-admin/config/
+  
